@@ -1,0 +1,11 @@
+.env
+
+node_modules/
+dist/
+
+.venv/
+__pycache__/
+*.pyc
+
+bridge_out.log
+bridge_err.log

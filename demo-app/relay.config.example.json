@@ -1,0 +1,8 @@
+{
+  "port": 3000,
+  "destinations": [
+    { "name": "team-alerts", "type": "slack", "target": "https://hooks.slack.com/services/EXAMPLE" },
+    { "name": "oncall", "type": "email", "target": "oncall@example.com" }
+  ],
+  "redisUrl": "redis://localhost:6379"
+}
