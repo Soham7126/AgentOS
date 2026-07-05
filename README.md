@@ -38,8 +38,6 @@ human. `agent handoff codex` replaces "copy-paste the last 50 messages."
         (remember / recall / improve / forget)
 ```
 
-Full design in [ARCHITECTURE.md](ARCHITECTURE.md); resolved build-time
-decisions in [docs/architecture.md](docs/architecture.md).
 
 ## Repo layout
 
@@ -72,13 +70,8 @@ agent timeline                  # recall()   — chronological history
 agent why <decision>            # recall()   — targeted decision lookup
 agent log <message>             # remember() — manual entry (Codex/Copilot activity)
 agent forget <task>             # forget()   — prune a resolved task or bug
+agent improve                   # improve()  — manually trigger graph enrichment
 ```
-
-`improve()` runs automatically via the Claude Code plugin's `SessionEnd`
-hook — see `integrations/claude-code/`. (Some Cognee Cloud tenant builds
-don't expose `/api/v1/improve` for the bridge's manual endpoint — see
-`docs/architecture.md` — the plugin hook is the primary, always-available
-coverage.)
 
 ## Demo
 

@@ -34,13 +34,12 @@ program
   .description("Show what an agent is assigned to")
   .action(async (agent: string) => {
     requireAgent(agent);
-    const { results } = await cognee.recall(`tasks assigned to ${agent}`, { agent, type: "task" });
+    const { results } = await cognee.recallList(`tasks assigned to ${agent}`, {
+      agent,
+      type: "task",
+    });
     console.log(`\n${cap(agent)} is assigned to:\n`);
-    if (isEmpty(results)) {
-      console.log("  (nothing found)");
-      return;
-    }
-    for (const r of results) console.log(`  - ${resultText(r)}`);
+    printList(results);
   });
 
 program
@@ -68,9 +67,9 @@ program
   .action(async (agent: string) => {
     requireAgent(agent);
     const [files, tasks, decisions] = await Promise.all([
-      cognee.recall(`files created by ${agent}`, { agent, type: "file" }),
-      cognee.recall(`tasks assigned to ${agent}`, { agent, type: "task" }),
-      cognee.recall(`decisions made by ${agent}`, { agent, type: "decision" }),
+      cognee.recallList(`files created by ${agent}`, { agent, type: "file" }),
+      cognee.recallList(`tasks assigned to ${agent}`, { agent, type: "task" }),
+      cognee.recallList(`decisions made by ${agent}`, { agent, type: "decision" }),
     ]);
     console.log(`\n${cap(agent)}'s Workspace`);
     console.log("─".repeat(30));
@@ -165,6 +164,18 @@ program
     }
   });
 
+program
+  .command("improve")
+  .description("Enrich the knowledge graph (re-index entities/relationships)")
+  .action(async () => {
+    const result = await cognee.improve();
+    if (result.status === "completed") {
+      console.log(`Graph enriched (${result.mode ?? "improve"}).`);
+    } else {
+      console.log(`Improve unavailable: ${result.error ?? "unknown error"}`);
+    }
+  });
+
 function cap(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -174,7 +185,13 @@ function printList(results: cognee.RecallResult[]): void {
     console.log("  (none found)");
     return;
   }
-  for (const r of results) console.log(`  - ${resultText(r)}`);
+  const seen = new Set<string>();
+  for (const r of results) {
+    const text = resultText(r);
+    if (!text || seen.has(text)) continue;
+    seen.add(text);
+    console.log(`  - ${text}`);
+  }
 }
 
 program.parseAsync(process.argv).catch((err) => {

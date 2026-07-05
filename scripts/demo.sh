@@ -26,3 +26,6 @@ $AGENT why redis
 echo -e "\n=== agent forget (lifecycle demo) ==="
 $AGENT forget "HMAC webhook signature validation"
 $AGENT status
+
+echo -e "\n=== agent improve (lifecycle demo) ==="
+$AGENT improve
